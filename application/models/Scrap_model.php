@@ -57,8 +57,23 @@ class Scrap_model extends CI_Model
                 }
 
                 return $output;
+                break;
+            case 'jatengdisway':
+                $html = file_get_html($main_url);
+                $output = [];
+                if ($html) {
+                    $get_link = $html->find('section div.bottom-15 div.media-content h2.media-heading');
 
 
+                    $output = [];
+                    for ($i = 0; $i < 5; $i++) {
+                        $link = $get_link[$i]->find('a', 0)->attr['href'];
+                        $data_result = $this->get_article($link, $from);
+                        $output[] = $data_result;
+                    }
+                }
+
+                return $output;
                 break;
         }
     }
@@ -215,6 +230,54 @@ class Scrap_model extends CI_Model
                 }
                 return $output;
                 break;
+            case 'jatengdisway':
+                $html = file_get_html($url);
+                $output = [];
+                if ($html) {
+                    $category = $html->find('div.entry-content ul.breadcrumb li a', 1)->plaintext;
+                    $title = $html->find('div.post h1', 0)->plaintext;
+                    $img = $html->find('div.post div.bottom-15 img', 0)->src;
+                    $paging = $html->find('ul.pagination li a');
+                    if ($paging) {
+                        $jml_page = count($paging);
+                    } else {
+                        $jml_page = 0;
+                    }
+
+
+                    $html_content = '';
+                    if ($jml_page > 0) {
+                        $html_content = $this->scrap_page($url, $jml_page, $from);
+                    } else {
+                        $content = $html->find('section.entry-box div.entry-content div.post p span');
+
+                        foreach ($content as $ct) {
+                            $filter = $ct->find('strong a');
+                            $strong = $ct->find('strong');
+
+
+                            foreach ($strong as $st) {
+                                $st->outertext = $st->plaintext;
+                            }
+
+                            if (!$filter) {
+                                $html_content .= $ct->plaintext . "\n";
+                            }
+                        }
+                    }
+
+                    $output = [
+                        'source' => $url,
+                        'from' => $from,
+                        'category' => $category,
+                        'title' => $title,
+                        'image' => $img,
+                        'jml_page' => $jml_page,
+                        'content' => $html_content,
+                    ];
+                    return $output;
+                }
+                break;
         }
     }
 
@@ -290,6 +353,31 @@ class Scrap_model extends CI_Model
                             foreach ($link as $l) {
                                 $l->outertext = $l->plaintext;
                             }
+
+                            foreach ($strong as $st) {
+                                $st->outertext = $st->plaintext;
+                            }
+
+                            if (!$filter) {
+                                $html_content .= $ct->plaintext . "\n";
+                            }
+                        }
+                    }
+                }
+                return $html_content;
+                break;
+            case 'jatengdisway':
+                $html_content = '';
+                $jml_looping = ($jml_page - 1) * 15;
+                for ($i = 0; $i < $jml_looping; $i += 15) {
+                    $url_page = $url . '/' . $i;
+                    $html = file_get_html($url_page);
+                    if ($html) {
+                        $content = $html->find('section.entry-box div.entry-content div.post p span');
+
+                        foreach ($content as $ct) {
+                            $filter = $ct->find('strong a');
+                            $strong = $ct->find('strong');
 
                             foreach ($strong as $st) {
                                 $st->outertext = $st->plaintext;
