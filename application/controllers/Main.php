@@ -13,6 +13,8 @@ class Main extends CI_Controller
                 $get_data = $this->scrap->main_scrap('https://www.panturapost.com/', $from);
             } else if ($from == 'jatengdisway') {
                 $get_data = $this->scrap->main_scrap('https://jateng.disway.id/', $from);
+            } else if ($from == 'mitratoday') {
+                $get_data = $this->scrap->main_scrap('https://www.mitratoday.com', $from);
             } else {
                 $params = [
                     'status' => false,
@@ -21,6 +23,9 @@ class Main extends CI_Controller
                 echo json_encode($params);
                 die;
             }
+
+            // var_dump($get_data);
+            // die;
 
             $this->database->different_category($get_data, $from);
         } else {

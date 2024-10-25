@@ -75,10 +75,27 @@ class Scrap_model extends CI_Model
 
                 return $output;
                 break;
+            case 'mitratoday':
+                $html = file_get_html($main_url);
+
+                $output = [];
+                if ($html) {
+                    $get_link = $html->find('ul.posts-list-container li a.post-thumb');
+                    $output = [];
+                    for ($i = 0; $i < 5; $i++) {
+                        $link = $get_link[$i]->href;
+                        $real_link = $main_url . '/' . $link;
+                        $data_result = $this->get_article($real_link, $from, $main_url);
+                        $output[] = $data_result;
+                    }
+                }
+
+                return $output;
+                break;
         }
     }
 
-    private function get_article($url, $from)
+    private function get_article($url, $from, $main_url = null)
     {
         switch ($from) {
             case 'vimanews':
@@ -277,6 +294,40 @@ class Scrap_model extends CI_Model
                     ];
                     return $output;
                 }
+                break;
+            case 'mitratoday':
+                $html = file_get_html($url);
+                $output = [];
+                if ($html) {
+                    $category = $html->find('nav#breadcrumb a', 1)->plaintext;
+                    $title = $html->find('div.entry-header h1.post-title ', 0)->plaintext;
+                    $image = $html->find('figure.single-featured-image img', 0)->src;
+                    $jml_page = 0;
+
+
+                    $html_content = '';
+                    $content = $html->find('article#the-post div.entry-content p');
+                    $no = time();
+                    foreach ($content as $ct) {
+                        $html_content .= $ct->plaintext . "\n";
+                    }
+
+
+                    $save_path = 'assets/images/' . $no . '.webp';
+                    // Download the image
+                    file_put_contents($save_path, file_get_contents($main_url . $image));
+
+                    $output = [
+                        'from' => $from,
+                        'source' => $url,
+                        'category' => $category,
+                        'title' => $title,
+                        'image' => base_url($save_path),
+                        'jml_page' => $jml_page,
+                        'content' => $html_content
+                    ];
+                }
+                return $output;
                 break;
         }
     }
