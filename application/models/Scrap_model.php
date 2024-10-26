@@ -108,6 +108,31 @@ class Scrap_model extends CI_Model
 
                 return $output;
                 break;
+            case 'mantiqmedia':
+                $html = file_get_html($main_url);
+
+                $output = [];
+                if ($html) {
+                    $get_link = $html->find('div#infinite-container article.type-post div.box-item a.post-thumbnail');
+
+                    $jml_article = count($get_link);
+                    if ($jml_article > 0) {
+                        $output = [];
+                        for ($i = 0; $i < $jml_article; $i++) {
+                            $link = $get_link[$i]->attr['href'];
+                            $data_result = $this->get_article($link, $from, $main_url);
+                            $output[] = $data_result;
+                        }
+                    } else {
+                        $output = [];
+                    }
+                }
+                return $output;
+
+                break;
+            case 'kabartegal':
+
+                break;
         }
     }
 
@@ -373,6 +398,50 @@ class Scrap_model extends CI_Model
                 }
                 return $output;
                 break;
+            case 'mantiqmedia':
+                $html = file_get_html($url);
+                $output = [];
+                if ($html) {
+                    $category = $html->find('header.entry-header div.gmr-meta-topic strong span.cat-links-content a', 1)->plaintext;
+                    $title = $html->find('header.entry-header h1.entry-title strong', 0)->plaintext;
+                    $image = $html->find('figure.post-thumbnail img.attachment-post-thumbnail', 0)->src;
+                    $get_page = $html->find('div.page-links a.post-page-numbers');
+                    if ($get_page) {
+                        $jml_page = count($get_page) + 2;
+                    } else {
+                        $jml_page = 0;
+                    }
+
+                    $html_content = '';
+                    if ($jml_page > 0) {
+                        $html_content = $this->scrap_page($url, $jml_page, $from);
+                    } else {
+                        $content = $html->find('div.single-wrap div.entry-content p');
+                        foreach ($content as $ct) {
+                            $link = $ct->find('a');
+                            foreach ($link as $l) {
+                                $l->outertext = $l->plaintext;
+                            }
+                            $html_content .= $ct->plaintext . "\n";
+                        }
+                    }
+
+
+                    $output = [
+                        'from' => $from,
+                        'source' => $url,
+                        'category' => $category,
+                        'title' => $title,
+                        'image' => $image,
+                        'jml_page' => $jml_page,
+                        'content' => $html_content
+                    ];
+                }
+                return $output;
+                break;
+            case 'kabartegal':
+
+                break;
         }
     }
 
@@ -486,7 +555,27 @@ class Scrap_model extends CI_Model
                 }
                 return $html_content;
                 break;
-            case 'seputarpantura':
+            case 'mantiqmedia':
+                $html_content = '';
+
+                for ($i = 1; $i < $jml_page; $i++) {
+                    $url_page = $url . '/' . $i;
+                    $html = file_get_html($url_page);
+
+                    if ($html) {
+
+                        $content = $html->find('div.single-wrap div.entry-content p');
+                        foreach ($content as $ct) {
+                            $link = $ct->find('a');
+                            foreach ($link as $l) {
+                                $l->outertext = $l->plaintext;
+                            }
+                            $html_content .= $ct->plaintext . "\n";
+                        }
+                    }
+                }
+
+                return $html_content;
                 break;
         }
     }

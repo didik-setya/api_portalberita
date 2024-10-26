@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+date_default_timezone_set('Asia/Jakarta');
 class Main extends CI_Controller
 {
     public function index($from = null)
@@ -17,6 +18,16 @@ class Main extends CI_Controller
                 $get_data = $this->scrap->main_scrap('https://www.mitratoday.com', $from);
             } else if ($from == 'seputarpantura') {
                 $get_data = $this->scrap->main_scrap('https://seputarpantura.com/', $from);
+            } else if ($from == 'kabartegal') {
+                $get_data = $this->scrap->main_scrap('https://kabartegal.pikiran-rakyat.com/', $from);
+            } else if ($from == 'mantiqmedia') {
+                $now = date('Y-m-d', strtotime('-1 day'));
+                $create_date = date_create($now);
+                $day = date_format($create_date, 'd');
+                $month = date_format($create_date, 'm');
+                $year = date_format($create_date, 'Y');
+
+                $get_data = $this->scrap->main_scrap('https://mantiqmedia.id/indeks/?dy=' . $day . '&mt=' . $month . '&yr=' . $year . '', $from);
             } else {
                 $params = [
                     'status' => false,
@@ -26,10 +37,16 @@ class Main extends CI_Controller
                 die;
             }
 
-            // var_dump($get_data);
-            // die;
-
-            $this->database->different_category($get_data, $from);
+            if ($get_data) {
+                $this->database->different_category($get_data, $from);
+            } else {
+                $params = [
+                    'status' => false,
+                    'msg' => 'No data result from ' . $from
+                ];
+                echo json_encode($params);
+                die;
+            }
         } else {
             $params = [
                 'status' => false,
