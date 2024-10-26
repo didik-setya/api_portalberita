@@ -18,8 +18,6 @@ class Main extends CI_Controller
                 $get_data = $this->scrap->main_scrap('https://www.mitratoday.com', $from);
             } else if ($from == 'seputarpantura') {
                 $get_data = $this->scrap->main_scrap('https://seputarpantura.com/', $from);
-            } else if ($from == 'kabartegal') {
-                $get_data = $this->scrap->main_scrap('https://kabartegal.pikiran-rakyat.com/', $from);
             } else if ($from == 'mantiqmedia') {
                 $now = date('Y-m-d', strtotime('-1 day'));
                 $create_date = date_create($now);

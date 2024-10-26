@@ -130,9 +130,6 @@ class Scrap_model extends CI_Model
                 return $output;
 
                 break;
-            case 'kabartegal':
-
-                break;
         }
     }
 
@@ -438,9 +435,6 @@ class Scrap_model extends CI_Model
                     ];
                 }
                 return $output;
-                break;
-            case 'kabartegal':
-
                 break;
         }
     }
