@@ -92,6 +92,22 @@ class Scrap_model extends CI_Model
 
                 return $output;
                 break;
+            case 'seputarpantura':
+                $html = file_get_html($main_url);
+
+                $output = [];
+                if ($html) {
+                    $get_link = $html->find('main#primary div#infinite-container article div.box-item a.post-thumbnail');
+                    $output = [];
+                    for ($i = 0; $i < 2; $i++) {
+                        $link = $get_link[$i]->attr['href'];
+                        $data_result = $this->get_article($link, $from, $main_url);
+                        $output[] = $data_result;
+                    }
+                }
+
+                return $output;
+                break;
         }
     }
 
@@ -329,6 +345,34 @@ class Scrap_model extends CI_Model
                 }
                 return $output;
                 break;
+            case 'seputarpantura':
+                $html = file_get_html($url);
+                $output = [];
+                if ($html) {
+                    $category = $html->find('span.cat-links-content a', 1)->plaintext;
+                    $title = $html->find('h1.entry-title strong', 0)->plaintext;
+                    $image = $html->find('figure.post-thumbnail img', 0)->src;
+                    $jml_page = 0;
+
+
+                    $html_content = '';
+                    $content = $html->find('div.single-wrap div.entry-content p');
+
+                    foreach ($content as $ct) {
+                        $html_content .= $ct->plaintext . "\n";
+                    }
+                    $output = [
+                        'from' => $from,
+                        'source' => $url,
+                        'category' => $category,
+                        'title' => $title,
+                        'image' => $image,
+                        'jml_page' => $jml_page,
+                        'content' => $html_content
+                    ];
+                }
+                return $output;
+                break;
         }
     }
 
@@ -441,6 +485,8 @@ class Scrap_model extends CI_Model
                     }
                 }
                 return $html_content;
+                break;
+            case 'seputarpantura':
                 break;
         }
     }

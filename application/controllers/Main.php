@@ -15,6 +15,8 @@ class Main extends CI_Controller
                 $get_data = $this->scrap->main_scrap('https://jateng.disway.id/', $from);
             } else if ($from == 'mitratoday') {
                 $get_data = $this->scrap->main_scrap('https://www.mitratoday.com', $from);
+            } else if ($from == 'seputarpantura') {
+                $get_data = $this->scrap->main_scrap('https://seputarpantura.com/', $from);
             } else {
                 $params = [
                     'status' => false,
