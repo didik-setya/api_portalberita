@@ -26,6 +26,8 @@ class Main extends CI_Controller
                 $year = date_format($create_date, 'Y');
 
                 $get_data = $this->scrap->main_scrap('https://mantiqmedia.id/indeks/?dy=' . $day . '&mt=' . $month . '&yr=' . $year . '', $from);
+            } else if ($from == 'smpantura') {
+                $get_data = $this->scrap->main_scrap('https://www.smpantura.news/', $from);
             } else {
                 $params = [
                     'status' => false,
@@ -34,6 +36,9 @@ class Main extends CI_Controller
                 echo json_encode($params);
                 die;
             }
+
+            // var_dump($get_data);
+            // die;
 
             if ($get_data) {
                 $this->database->different_category($get_data, $from);

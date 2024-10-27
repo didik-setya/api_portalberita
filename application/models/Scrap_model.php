@@ -130,6 +130,27 @@ class Scrap_model extends CI_Model
                 return $output;
 
                 break;
+            case 'smpantura':
+                $html = file_get_html($main_url);
+
+                $output = [];
+                if ($html) {
+                    $get_link = $html->find('div#infinite-container article.type-post div.box-item');
+                    $this_date = date("Y-m-d", strtotime('-1 day'));
+
+                    foreach ($get_link as $gl) {
+                        $link = $gl->find('a.post-thumbnail', 0)->href;
+                        $get_date = $gl->find('div.box-content div.gmr-meta-topic span.meta-content span.posted-on time.entry-date', 0)->attr['datetime'];
+                        $date_upload = date('Y-m-d', strtotime($get_date));
+
+                        if ($date_upload == $this_date) {
+                            $data_result = $this->get_article($link, $from, $main_url);
+                            $output[] = $data_result;
+                        }
+                    }
+                }
+                return $output;
+                break;
         }
     }
 
@@ -422,6 +443,41 @@ class Scrap_model extends CI_Model
                             $html_content .= $ct->plaintext . "\n";
                         }
                     }
+
+
+                    $output = [
+                        'from' => $from,
+                        'source' => $url,
+                        'category' => $category,
+                        'title' => $title,
+                        'image' => $image,
+                        'jml_page' => $jml_page,
+                        'content' => $html_content
+                    ];
+                }
+                return $output;
+                break;
+            case 'smpantura':
+                $html = file_get_html($url);
+                $output = [];
+                if ($html) {
+                    $category = $html->find('div.breadcrumbs span a', 1)->plaintext;
+                    $title = $html->find('header.entry-header h1.entry-title strong', 0)->plaintext;
+                    $image = $html->find('figure.post-thumbnail img.attachment-post-thumbnail', 0)->src;
+
+                    $jml_page = 0;
+
+                    $html_content = '';
+
+                    $content = $html->find('div.single-wrap div.entry-content p.p1 span.s1');
+                    foreach ($content as $ct) {
+                        $link = $ct->find('a');
+                        foreach ($link as $l) {
+                            $l->outertext = $l->plaintext;
+                        }
+                        $html_content .= $ct->plaintext . "\n";
+                    }
+
 
 
                     $output = [
