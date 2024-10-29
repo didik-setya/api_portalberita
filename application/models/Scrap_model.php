@@ -250,7 +250,7 @@ class Scrap_model extends CI_Model
                     if ($jml_page > 0) {
                         $html_content = $this->scrap_page($url, $jml_page, $from);
                     } else {
-                        $content = $html->find('section.entry-box div.entry-content div.post p span');
+                        $content = $html->find('section.entry-box div.entry-content div.post p');
 
                         foreach ($content as $ct) {
                             $filter = $ct->find('strong a');
@@ -261,9 +261,7 @@ class Scrap_model extends CI_Model
                                 $st->outertext = $st->plaintext;
                             }
 
-                            if (!$filter) {
-                                $html_content .= $ct->plaintext . "\n";
-                            }
+                            $html_content .= $ct->plaintext . "\n";
                         }
                     }
 
@@ -589,17 +587,18 @@ class Scrap_model extends CI_Model
                     $url_page = $url . '/' . $i;
                     $html = file_get_html($url_page);
                     if ($html) {
-                        $content = $html->find('section.entry-box div.entry-content div.post p span');
+                        $content = $html->find('section.entry-box div.entry-content div.post p');
 
                         foreach ($content as $ct) {
                             $filter = $ct->find('strong a');
                             $strong = $ct->find('strong');
+                            $fsource = $ct->find('p.bottom-15');
 
                             foreach ($strong as $st) {
                                 $st->outertext = $st->plaintext;
                             }
 
-                            if (!$filter) {
+                            if (!$filter && !$fsource) {
                                 $html_content .= $ct->plaintext . "\n";
                             }
                         }
