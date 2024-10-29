@@ -28,6 +28,8 @@ class Main extends CI_Controller
                 $get_data = $this->scrap->main_scrap('https://mantiqmedia.id/indeks/?dy=' . $day . '&mt=' . $month . '&yr=' . $year . '', $from);
             } else if ($from == 'smpantura') {
                 $get_data = $this->scrap->main_scrap('https://www.smpantura.news/', $from);
+            } else if ($from == 'tegalkota') {
+                $get_data = $this->scrap->main_scrap('https://www.tegalkota.go.id/v2/index.php?option=com_content&view=category&id=20&Itemid=252&lang=id', $from);
             } else {
                 $params = [
                     'status' => false,
@@ -37,8 +39,8 @@ class Main extends CI_Controller
                 die;
             }
 
-            // var_dump($get_data);
-            // die;
+            var_dump($get_data);
+            die;
 
             if ($get_data) {
                 $this->database->different_category($get_data, $from);

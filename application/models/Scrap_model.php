@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+date_default_timezone_set('Asia/Jakarta');
 require 'assets/simplehtmldom/simple_html_dom.php';
 class Scrap_model extends CI_Model
 {
@@ -143,8 +144,33 @@ class Scrap_model extends CI_Model
                         $get_date = $gl->find('div.box-content div.gmr-meta-topic span.meta-content span.posted-on time.entry-date', 0)->attr['datetime'];
                         $date_upload = date('Y-m-d', strtotime($get_date));
 
+                        // var_dump($date_upload);
+
                         if ($date_upload == $this_date) {
                             $data_result = $this->get_article($link, $from, $main_url);
+                            $output[] = $data_result;
+                        }
+                    }
+                }
+                return $output;
+                break;
+            case 'tegalkota':
+                $html = file_get_html($main_url);
+
+                $output = [];
+                if ($html) {
+                    $get_link = $html->find('table.category tbody tr');
+
+                    foreach ($get_link as $gl) {
+                        $based = 'https://www.tegalkota.go.id';
+                        $link = $gl->find('td.list-title a', 0)->href;
+                        $get_date = $gl->find('td.list-date', 0)->plaintext;
+                        $formated_date = $this->format_date($get_date);
+                        $this_date = date("Y-m-d", strtotime('-1 day'));
+
+                        $link_target = $based . $link;
+                        if ($formated_date == $this_date) {
+                            $data_result = $this->get_article($link_target, $from, $based);
                             $output[] = $data_result;
                         }
                     }
@@ -420,7 +446,7 @@ class Scrap_model extends CI_Model
                 $html = file_get_html($url);
                 $output = [];
                 if ($html) {
-                    $category = $html->find('header.entry-header div.gmr-meta-topic strong span.cat-links-content a', 1)->plaintext;
+                    $category = $html->find('main.site-main article.content-single div.breadcrumbs span a span', 1)->plaintext;
                     $title = $html->find('header.entry-header h1.entry-title strong', 0)->plaintext;
                     $image = $html->find('figure.post-thumbnail img.attachment-post-thumbnail', 0)->src;
                     $get_page = $html->find('div.page-links a.post-page-numbers');
@@ -469,7 +495,7 @@ class Scrap_model extends CI_Model
 
                     $html_content = '';
 
-                    $content = $html->find('div.single-wrap div.entry-content p.p1 span.s1');
+                    $content = $html->find('div#page div#content div.container div.row main.site-main article.content-single div.single-wrap div.entry-content p');
                     foreach ($content as $ct) {
                         $link = $ct->find('a');
                         foreach ($link as $l) {
@@ -486,6 +512,35 @@ class Scrap_model extends CI_Model
                         'category' => $category,
                         'title' => $title,
                         'image' => $image,
+                        'jml_page' => $jml_page,
+                        'content' => $html_content
+                    ];
+                }
+                return $output;
+                break;
+            case 'tegalkota':
+                $html = file_get_html($url);
+                $output = [];
+                if ($html) {
+                    $category = 'Berita';
+                    $title = $html->find('div#jsn-mainbody div.item-page div.page-header h2 a', 0)->plaintext;
+                    $image = $html->find('div#jsn-mainbody div.item-page p img', 0)->src;
+
+                    $jml_page = 0;
+
+                    $html_content = '';
+
+                    $content = $html->find('div#jsn-mainbody div.item-page p');
+                    foreach ($content as $ct) {
+                        $html_content .= $ct->plaintext . "\n";
+                    }
+
+                    $output = [
+                        'from' => $from,
+                        'source' => $url,
+                        'category' => $category,
+                        'title' => $title,
+                        'image' => $main_url . "/v2/" . $image,
                         'jml_page' => $jml_page,
                         'content' => $html_content
                     ];
@@ -628,5 +683,28 @@ class Scrap_model extends CI_Model
                 return $html_content;
                 break;
         }
+    }
+
+
+    private function format_date($str_date)
+    {
+        $months = [
+            'Januari' => 'January',
+            'Februari' => 'February',
+            'Maret' => 'March',
+            'April' => 'April',
+            'Mei' => 'May',
+            'Juni' => 'June',
+            'Juli' => 'July',
+            'Agustus' => 'August',
+            'September' => 'September',
+            'Oktober' => 'October',
+            'November' => 'November',
+            'Desember' => 'December'
+        ];
+
+        $eng_date = str_replace(array_keys($months), array_values($months), $str_date);
+        $date = strtotime($eng_date);
+        return date('Y-m-d', $date);
     }
 }
