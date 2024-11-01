@@ -6,18 +6,30 @@ class Scrap_model extends CI_Model
 {
     public function main_scrap($main_url, $from)
     {
+        // $now_date = date('Y-m-d');
+        $now_date = date('Y-m-d', strtotime('-1 day'));
+
         switch ($from) {
             case 'vimanews':
                 $html = file_get_html($main_url);
-
                 $output = [];
                 if ($html) {
                     $get_link = $html->find('div.latest__wrap div.latest__item');
                     $output = [];
-                    for ($i = 0; $i < 5; $i++) {
-                        $link = $get_link[$i]->find('div.latest__right h2.latest__title a', 0)->href;
-                        $data_result = $this->get_article($link, $from);
-                        $output[] = $data_result;
+                    foreach ($get_link as $gl) {
+                        $link = $gl->find('div.latest__right h2.latest__title a', 0)->href;
+                        $date = $gl->find('div.latest__right date.latest__date', 0)->plaintext;
+                        $clean_date = preg_replace('/,\s*\d{2}:\d{2}\s*WIB/', '', $date);
+                        $formated_date = $this->format_date($clean_date);
+
+                        if ($formated_date == $now_date) {
+
+                            $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+                            if ($get_data <= 0) {
+                                $data_result = $this->get_article($link, $from);
+                                $output[] = $data_result;
+                            }
+                        }
                     }
                 }
 
@@ -30,12 +42,14 @@ class Scrap_model extends CI_Model
                 if ($html) {
                     $get_link = $html->find('section div.bottom-15 div.media-content h2.media-heading');
 
-
                     $output = [];
-                    for ($i = 0; $i < 5; $i++) {
-                        $link = $get_link[$i]->find('a', 0)->attr['href'];
-                        $data_result = $this->get_article($link, $from);
-                        $output[] = $data_result;
+                    foreach ($get_link as $gl) {
+                        $link = $gl->find('a', 0)->attr['href'];
+                        $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+                        if ($get_data <= 0) {
+                            $data_result = $this->get_article($link, $from);
+                            $output[] = $data_result;
+                        }
                     }
                 }
 
@@ -46,14 +60,21 @@ class Scrap_model extends CI_Model
 
                 $output = [];
                 if ($html) {
-                    $get_link = $html->find('div.latest__wrap div.latest__item div.latest__img');
-
-
+                    $get_link = $html->find('div.latest__wrap div.latest__item');
                     $output = [];
-                    for ($i = 0; $i < 5; $i++) {
-                        $link = $get_link[$i]->find('a', 0)->attr['href'];
-                        $data_result = $this->get_article($link, $from);
-                        $output[] = $data_result;
+                    foreach ($get_link as $gl) {
+                        $link = $gl->find('div.latest__img a', 0)->attr['href'];
+                        $date = $gl->find('div.latest__right date.latest__date', 0)->plaintext;
+                        $clean_date = preg_replace('/,\s*\d{2}:\d{2}\s*WIB/', '', $date);
+                        $formated_date = $this->format_date($clean_date);
+
+                        if ($formated_date == $now_date) {
+                            $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+                            if ($get_data <= 0) {
+                                $data_result = $this->get_article($link, $from);
+                                $output[] = $data_result;
+                            }
+                        }
                     }
                 }
 
@@ -65,12 +86,14 @@ class Scrap_model extends CI_Model
                 if ($html) {
                     $get_link = $html->find('section div.bottom-15 div.media-content h2.media-heading');
 
-
                     $output = [];
-                    for ($i = 0; $i < 5; $i++) {
-                        $link = $get_link[$i]->find('a', 0)->attr['href'];
-                        $data_result = $this->get_article($link, $from);
-                        $output[] = $data_result;
+                    foreach ($get_link as $gl) {
+                        $link = $gl->find('a', 0)->attr['href'];
+                        $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+                        if ($get_data <= 0) {
+                            $data_result = $this->get_article($link, $from);
+                            $output[] = $data_result;
+                        }
                     }
                 }
 
@@ -81,13 +104,17 @@ class Scrap_model extends CI_Model
 
                 $output = [];
                 if ($html) {
-                    $get_link = $html->find('ul.posts-list-container li a.post-thumb');
+                    $get_link = $html->find('div#tie-block_3151 div.container-wrapper div.mag-box-container ul.posts-list-container li a.post-thumb');
                     $output = [];
-                    for ($i = 0; $i < 5; $i++) {
-                        $link = $get_link[$i]->href;
+                    foreach ($get_link as $gl) {
+                        $link = $gl->href;
                         $real_link = $main_url . '/' . $link;
-                        $data_result = $this->get_article($real_link, $from, $main_url);
-                        $output[] = $data_result;
+                        $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $real_link])->get()->num_rows();
+
+                        if ($get_data <= 0) {
+                            $data_result = $this->get_article($real_link, $from, $main_url);
+                            $output[] = $data_result;
+                        }
                     }
                 }
 
@@ -100,10 +127,14 @@ class Scrap_model extends CI_Model
                 if ($html) {
                     $get_link = $html->find('main#primary div#infinite-container article div.box-item a.post-thumbnail');
                     $output = [];
-                    for ($i = 0; $i < 2; $i++) {
-                        $link = $get_link[$i]->attr['href'];
-                        $data_result = $this->get_article($link, $from, $main_url);
-                        $output[] = $data_result;
+                    foreach ($get_link as $gl) {
+                        $link = $gl->attr['href'];
+                        $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+
+                        if ($get_data <= 0) {
+                            $data_result = $this->get_article($link, $from, $main_url);
+                            $output[] = $data_result;
+                        }
                     }
                 }
 
@@ -119,10 +150,14 @@ class Scrap_model extends CI_Model
                     $jml_article = count($get_link);
                     if ($jml_article > 0) {
                         $output = [];
-                        for ($i = 0; $i < $jml_article; $i++) {
-                            $link = $get_link[$i]->attr['href'];
-                            $data_result = $this->get_article($link, $from, $main_url);
-                            $output[] = $data_result;
+                        foreach ($get_link as $gl) {
+                            $link = $gl->attr['href'];
+                            $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+
+                            if ($get_data <= 0) {
+                                $data_result = $this->get_article($link, $from, $main_url);
+                                $output[] = $data_result;
+                            }
                         }
                     } else {
                         $output = [];
@@ -137,18 +172,21 @@ class Scrap_model extends CI_Model
                 $output = [];
                 if ($html) {
                     $get_link = $html->find('div#infinite-container article.type-post div.box-item');
-                    $this_date = date("Y-m-d", strtotime('-1 day'));
+                    // $this_date = date("Y-m-d", strtotime('-1 day'));
 
                     foreach ($get_link as $gl) {
                         $link = $gl->find('a.post-thumbnail', 0)->href;
                         $get_date = $gl->find('div.box-content div.gmr-meta-topic span.meta-content span.posted-on time.entry-date', 0)->attr['datetime'];
                         $date_upload = date('Y-m-d', strtotime($get_date));
 
-                        // var_dump($date_upload);
 
-                        if ($date_upload == $this_date) {
-                            $data_result = $this->get_article($link, $from, $main_url);
-                            $output[] = $data_result;
+                        if ($date_upload == $now_date) {
+                            $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+
+                            if ($get_data <= 0) {
+                                $data_result = $this->get_article($link, $from, $main_url);
+                                $output[] = $data_result;
+                            }
                         }
                     }
                 }
@@ -166,11 +204,34 @@ class Scrap_model extends CI_Model
                         $link = $gl->find('td.list-title a', 0)->href;
                         $get_date = $gl->find('td.list-date', 0)->plaintext;
                         $formated_date = $this->format_date($get_date);
-                        $this_date = date("Y-m-d", strtotime('-1 day'));
 
                         $link_target = $based . $link;
-                        if ($formated_date == $this_date) {
-                            $data_result = $this->get_article($link_target, $from, $based);
+                        if ($formated_date == $now_date) {
+                            $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link_target])->get()->num_rows();
+
+                            if ($get_data <= 0) {
+                                $data_result = $this->get_article($link_target, $from, $based);
+                                $output[] = $data_result;
+                            }
+                        }
+                    }
+                }
+                return $output;
+                break;
+            case 'dprd':
+                $html = file_get_html($main_url);
+
+                $output = [];
+                if ($html) {
+                    $get_link = $html->find('div.wpb_wrapper div.jeg_pagination_nextprev div.jeg_block_container article.jeg_post');
+
+                    foreach ($get_link as $gl) {
+                        $link = $gl->find('div.jeg_thumb a', 0)->href;
+
+                        $get_data = $this->db->select('judul')->from('berita')->where(['source' => $from, 'url_source' => $link])->get()->num_rows();
+
+                        if ($get_data <= 0) {
+                            $data_result = $this->get_article($link, $from);
                             $output[] = $data_result;
                         }
                     }
@@ -416,7 +477,7 @@ class Scrap_model extends CI_Model
                 $html = file_get_html($url);
                 $output = [];
                 if ($html) {
-                    $category = $html->find('span.cat-links-content a', 1)->plaintext;
+                    $category = $html->find('div.breadcrumbs span a span', 1)->plaintext;
                     $title = $html->find('h1.entry-title strong', 0)->plaintext;
                     $image = $html->find('figure.post-thumbnail img', 0)->src;
                     $jml_page = 0;
@@ -539,6 +600,33 @@ class Scrap_model extends CI_Model
                         'category' => $category,
                         'title' => $title,
                         'image' => $main_url . "/v2/" . $image,
+                        'jml_page' => $jml_page,
+                        'content' => $html_content
+                    ];
+                }
+                return $output;
+                break;
+            case 'dprd':
+                $html = file_get_html($url);
+                $output = [];
+                if ($html) {
+                    $category = $html->find('div#breadcrumbs span a', 1)->plaintext;
+                    $title = $html->find('div.entry-header h1.jeg_post_title', 0)->plaintext;
+                    $image = $html->find('div.jeg_featured a div.thumbnail-container img.wp-post-image', 0)->src;
+                    $jml_page = 0;
+
+                    $html_content = '';
+                    $content = $html->find('div.content-inner p');
+
+                    foreach ($content as $ct) {
+                        $html_content .= $ct->plaintext . "\n";
+                    }
+                    $output = [
+                        'from' => $from,
+                        'source' => $url,
+                        'category' => $category,
+                        'title' => $title,
+                        'image' => $image,
                         'jml_page' => $jml_page,
                         'content' => $html_content
                     ];
@@ -683,7 +771,6 @@ class Scrap_model extends CI_Model
                 break;
         }
     }
-
 
     private function format_date($str_date)
     {

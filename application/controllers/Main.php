@@ -19,7 +19,7 @@ class Main extends CI_Controller
             } else if ($from == 'seputarpantura') {
                 $get_data = $this->scrap->main_scrap('https://seputarpantura.com/', $from);
             } else if ($from == 'mantiqmedia') {
-                $now = date('Y-m-d', strtotime('-1 day'));
+                $now = date('Y-m-d');
                 $create_date = date_create($now);
                 $day = date_format($create_date, 'd');
                 $month = date_format($create_date, 'm');
@@ -30,6 +30,8 @@ class Main extends CI_Controller
                 $get_data = $this->scrap->main_scrap('https://www.smpantura.news/', $from);
             } else if ($from == 'tegalkota') {
                 $get_data = $this->scrap->main_scrap('https://www.tegalkota.go.id/v2/index.php?option=com_content&view=category&id=20&Itemid=252&lang=id', $from);
+            } else if ($from == 'dprd') {
+                $get_data = $this->scrap->main_scrap('https://dprd-tegalkab.go.id/', $from);
             } else {
                 $params = [
                     'status' => false,
@@ -39,15 +41,17 @@ class Main extends CI_Controller
                 die;
             }
 
-            var_dump($get_data);
-            die;
+            // var_dump($get_data);
+            // die;
 
             if ($get_data) {
                 $this->database->different_category($get_data, $from);
             } else {
+                $message = 'No data result from ' . $from;
+                $this->database->insert_scrap_history($message);
                 $params = [
                     'status' => false,
-                    'msg' => 'No data result from ' . $from
+                    'msg' => $message
                 ];
                 echo json_encode($params);
                 die;

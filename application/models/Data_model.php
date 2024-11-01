@@ -42,26 +42,40 @@ class Data_model extends CI_Model
             } else {
                 $kategori = 0;
             }
-            $text_source = '<p><strong>Sumber: </strong> <a href="' . $d['source'] . '" target="_blank">' . $d['source'] . '</a></p>';
             $row = [
                 'judul' => $d['title'],
                 'id_kategori' => $kategori,
                 'source' => $d['from'],
                 'gambar' => $d['image'],
-                'teks_berita' => nl2br($d['content']) . $text_source,
+                'teks_berita' => nl2br($d['content']),
                 'tgl_posting' => date('Y-m-d H:i:s'),
                 'id_admin' => 1,
-                'dilihat' => 0
+                'dilihat' => 0,
+                'url_source' => $d['source']
             ];
             $data_insert[] = $row;
         }
 
         $this->db->insert_batch('berita', $data_insert);
         if ($this->db->affected_rows() > 0) {
-            $params = ['status' => true, 'msg' => 'Success add data from ' . $from];
+            $jml_data = $this->db->affected_rows();
+            $message = 'Success add data from ' . $from . ' . total ' . $jml_data . ' data';
+            $params = ['status' => true, 'msg' => $message];
+            $this->insert_scrap_history($message);
         } else {
-            $params = ['status' => true, 'msg' => 'Failed add data from ' . $from];
+            $message = 'Failed add data from ' . $from;
+            $params = ['status' => true, 'msg' => $message];
+            $this->insert_scrap_history($message);
         }
         echo json_encode($params);
+    }
+
+    public function insert_scrap_history($message)
+    {
+        $data = [
+            'time' => date('Y-m-d H:i:s'),
+            'message' => $message
+        ];
+        $this->db->insert('scrap_history', $data);
     }
 }
