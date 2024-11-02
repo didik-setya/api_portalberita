@@ -62,6 +62,7 @@ class Data_model extends CI_Model
             $message = 'Success add data from ' . $from . ' . total ' . $jml_data . ' data';
             $params = ['status' => true, 'msg' => $message];
             $this->insert_scrap_history($message);
+            $this->delete_empty_content();
         } else {
             $message = 'Failed add data from ' . $from;
             $params = ['status' => true, 'msg' => $message];
@@ -77,5 +78,14 @@ class Data_model extends CI_Model
             'message' => $message
         ];
         $this->db->insert('scrap_history', $data);
+    }
+
+    private function delete_empty_content()
+    {
+        $data = $this->db
+            ->where('judul', '')
+            ->or_where('gambar', '')
+            ->or_where('teks_berita', '')
+            ->delete('berita');
     }
 }
