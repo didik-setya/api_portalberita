@@ -51,7 +51,8 @@ class Data_model extends CI_Model
                 'tgl_posting' => date('Y-m-d H:i:s'),
                 'id_admin' => 1,
                 'dilihat' => 0,
-                'url_source' => $d['source']
+                'url_source' => $d['source'],
+                'keyword' => $d['keyword']
             ];
             $data_insert[] = $row;
         }
