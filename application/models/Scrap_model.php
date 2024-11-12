@@ -6,8 +6,8 @@ class Scrap_model extends CI_Model
 {
     public function main_scrap($main_url, $from)
     {
-        // $now_date = date('Y-m-d');
-        $now_date = date('Y-m-d', strtotime('-1 day'));
+        $now_date = date('Y-m-d');
+        // $now_date = date('Y-m-d', strtotime('-1 day'));
 
         switch ($from) {
             case 'vimanews':

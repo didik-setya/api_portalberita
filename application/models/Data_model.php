@@ -62,7 +62,6 @@ class Data_model extends CI_Model
             $message = 'Success add data from ' . $from . ' . total ' . $jml_data . ' data';
             $params = ['status' => true, 'msg' => $message];
             $this->insert_scrap_history($message);
-            $this->delete_empty_content();
         } else {
             $message = 'Failed add data from ' . $from;
             $params = ['status' => true, 'msg' => $message];
@@ -80,12 +79,37 @@ class Data_model extends CI_Model
         $this->db->insert('scrap_history', $data);
     }
 
-    private function delete_empty_content()
+    public function delete_empty_content()
     {
-        $data = $this->db
-            ->where('judul', '')
-            ->or_where('gambar', '')
-            ->or_where('teks_berita', '')
-            ->delete('berita');
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+
+        // $year = '2024';
+        // $month = '11';
+        // $day = '02';
+
+        $get_data = $this->db->get_where('berita', [
+            'year(tgl_posting)' => $year,
+            'month(tgl_posting)' => $month,
+            'day(tgl_posting)' => $day
+        ])->result();
+
+        $affected_rows = 0;
+        foreach ($get_data as $gd) {
+            $content = $gd->teks_berita;
+            $jml_word = str_word_count($content);
+
+            if ($jml_word <= 10) {
+                $this->db->delete('berita', ['id_berita' => $gd->id_berita]);
+                echo $affected_rows;
+                $affected_rows += $this->db->affected_rows();
+            }
+        }
+
+        if ($affected_rows > 0) {
+            $message = 'Deleted ' . $affected_rows . ' data empty content';
+            $this->insert_scrap_history($message);
+        }
     }
 }
