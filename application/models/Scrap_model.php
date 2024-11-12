@@ -280,6 +280,13 @@ class Scrap_model extends CI_Model
                         }
                     }
 
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
                     $output = [
                         'category' => $category,
                         'title' => $title,
@@ -288,6 +295,7 @@ class Scrap_model extends CI_Model
                         'source' => $url,
                         'from' => $from,
                         'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;
@@ -326,6 +334,13 @@ class Scrap_model extends CI_Model
                         }
                     }
 
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
                     $output = [
                         'source' => $url,
                         'from' => $from,
@@ -334,6 +349,7 @@ class Scrap_model extends CI_Model
                         'image' => $img,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                     return $output;
                 }
@@ -378,6 +394,13 @@ class Scrap_model extends CI_Model
                         }
                     }
 
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
 
                     $output = [
                         'from' => $from,
@@ -386,7 +409,8 @@ class Scrap_model extends CI_Model
                         'title' => $title,
                         'image' => $image,
                         'jml_page' => $jml_page,
-                        'content' => $html_content
+                        'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;
@@ -427,6 +451,13 @@ class Scrap_model extends CI_Model
                         }
                     }
 
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
                     $output = [
                         'source' => $url,
                         'from' => $from,
@@ -435,6 +466,7 @@ class Scrap_model extends CI_Model
                         'image' => $img,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                     return $output;
                 }
@@ -461,6 +493,13 @@ class Scrap_model extends CI_Model
                     // Download the image
                     file_put_contents($save_path, file_get_contents($main_url . $image));
 
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
                     $output = [
                         'from' => $from,
                         'source' => $url,
@@ -468,7 +507,8 @@ class Scrap_model extends CI_Model
                         'title' => $title,
                         'image' => base_url($save_path),
                         'jml_page' => $jml_page,
-                        'content' => $html_content
+                        'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;
@@ -489,6 +529,14 @@ class Scrap_model extends CI_Model
                     foreach ($content as $ct) {
                         $html_content .= $ct->plaintext . "\n";
                     }
+
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
                     $output = [
                         'from' => $from,
                         'source' => $url,
@@ -496,7 +544,8 @@ class Scrap_model extends CI_Model
                         'title' => $title,
                         'image' => $image,
                         'jml_page' => $jml_page,
-                        'content' => $html_content
+                        'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;
@@ -529,6 +578,13 @@ class Scrap_model extends CI_Model
                         }
                     }
 
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
 
                     $output = [
                         'from' => $from,
@@ -537,7 +593,8 @@ class Scrap_model extends CI_Model
                         'title' => $title,
                         'image' => $image,
                         'jml_page' => $jml_page,
-                        'content' => $html_content
+                        'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;
@@ -563,6 +620,13 @@ class Scrap_model extends CI_Model
                         $html_content .= $ct->plaintext . "\n";
                     }
 
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
 
 
                     $output = [
@@ -572,7 +636,8 @@ class Scrap_model extends CI_Model
                         'title' => $title,
                         'image' => $image,
                         'jml_page' => $jml_page,
-                        'content' => $html_content
+                        'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;
@@ -594,6 +659,14 @@ class Scrap_model extends CI_Model
                         $html_content .= $ct->plaintext . "\n";
                     }
 
+
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
                     $output = [
                         'from' => $from,
                         'source' => $url,
@@ -601,7 +674,8 @@ class Scrap_model extends CI_Model
                         'title' => $title,
                         'image' => $main_url . "/v2/" . $image,
                         'jml_page' => $jml_page,
-                        'content' => $html_content
+                        'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;
@@ -621,6 +695,14 @@ class Scrap_model extends CI_Model
                     foreach ($content as $ct) {
                         $html_content .= $ct->plaintext . "\n";
                     }
+
+                    $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
+                    if ($keywordsMetaTag) {
+                        $meta_keyword = 'singularity, pantura, jawa tengah, ' . $keywordsMetaTag->content;
+                    } else {
+                        $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
+                    }
+
                     $output = [
                         'from' => $from,
                         'source' => $url,
@@ -628,7 +710,8 @@ class Scrap_model extends CI_Model
                         'title' => $title,
                         'image' => $image,
                         'jml_page' => $jml_page,
-                        'content' => $html_content
+                        'content' => $html_content,
+                        'keyword' => $meta_keyword
                     ];
                 }
                 return $output;

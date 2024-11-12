@@ -41,8 +41,8 @@ class Main extends CI_Controller
                 die;
             }
 
-            // var_dump($get_data);
-            // die;
+            var_dump($get_data);
+            die;
 
             if ($get_data) {
                 $this->database->different_category($get_data, $from);
