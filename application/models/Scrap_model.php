@@ -286,11 +286,12 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($img);
 
                     $output = [
                         'category' => $category,
                         'title' => $title,
-                        'image' => $img,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'source' => $url,
                         'from' => $from,
@@ -340,13 +341,14 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($img);
 
                     $output = [
                         'source' => $url,
                         'from' => $from,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $img,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -400,6 +402,7 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($image);
 
 
                     $output = [
@@ -407,7 +410,7 @@ class Scrap_model extends CI_Model
                         'source' => $url,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $image,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -457,13 +460,14 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($img);
 
                     $output = [
                         'source' => $url,
                         'from' => $from,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $img,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -483,15 +487,11 @@ class Scrap_model extends CI_Model
 
                     $html_content = '';
                     $content = $html->find('article#the-post div.entry-content p');
-                    $no = time();
+
                     foreach ($content as $ct) {
                         $html_content .= $ct->plaintext . "\n";
                     }
 
-
-                    $save_path = 'assets/images/' . $no . '.webp';
-                    // Download the image
-                    file_put_contents($save_path, file_get_contents($main_url . $image));
 
                     $keywordsMetaTag = $html->find('meta[name=keywords]', 0);
                     if ($keywordsMetaTag) {
@@ -499,13 +499,15 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $save_path = $this->download_image($main_url . $image);
+
 
                     $output = [
                         'from' => $from,
                         'source' => $url,
                         'category' => $category,
                         'title' => $title,
-                        'image' => base_url($save_path),
+                        'image' => $save_path,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -536,13 +538,15 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($image);
+
 
                     $output = [
                         'from' => $from,
                         'source' => $url,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $image,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -584,6 +588,7 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($image);
 
 
                     $output = [
@@ -591,7 +596,7 @@ class Scrap_model extends CI_Model
                         'source' => $url,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $image,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -626,6 +631,7 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($image);
 
 
 
@@ -634,7 +640,7 @@ class Scrap_model extends CI_Model
                         'source' => $url,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $image,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -666,13 +672,15 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $url_image = $main_url . "/v2/" . $image;
+                    $source_image = $this->download_image($url_image);
 
                     $output = [
                         'from' => $from,
                         'source' => $url,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $main_url . "/v2/" . $image,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -702,13 +710,14 @@ class Scrap_model extends CI_Model
                     } else {
                         $meta_keyword = 'singularity, jawa tengah, pantura, Berita Terpercaya, Berita indonesia,';
                     }
+                    $source_image = $this->download_image($image);
 
                     $output = [
                         'from' => $from,
                         'source' => $url,
                         'category' => $category,
                         'title' => $title,
-                        'image' => $image,
+                        'image' => $source_image,
                         'jml_page' => $jml_page,
                         'content' => $html_content,
                         'keyword' => $meta_keyword
@@ -875,5 +884,34 @@ class Scrap_model extends CI_Model
         $eng_date = str_replace(array_keys($months), array_values($months), $str_date);
         $date = strtotime($eng_date);
         return date('Y-m-d', $date);
+    }
+
+
+    private function download_image($image = null)
+    {
+        if ($image) {
+            $no = $this->generateRandomString(9);
+            $save_path = 'assets/images/' . $no . '.webp';
+            file_put_contents($save_path, file_get_contents($image));
+            $output = base_url($save_path);
+        } else {
+            $output = 'defaultimage.jpg';
+        }
+        return $output;
+    }
+
+    private function generateRandomString($length)
+    {
+        // Define the characters to choose from
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+
+        // Generate the random string
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+
+        return $randomString;
     }
 }
